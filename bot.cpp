@@ -50,11 +50,11 @@ void Bot::move()
                 {
                     tmp.push_back('s');
                 }
-                else if(grid[X * N + Y - 1] != -1 && Y !=0)
+                if(grid[X * N + Y - 1] != -1 && Y !=0)
                 {
                     tmp.push_back('a');
                 }
-                else if (grid[X * N + Y +1] != -1 && Y != 19)
+                if (grid[X * N + Y +1] != -1 && Y != 19)
                 {
                     tmp.push_back('d');
                 }
@@ -91,11 +91,11 @@ void Bot::move()
                 {
                     tmp.push_back('w');
                 }
-                else if(grid[X * N + Y - 1] != -1 && Y !=0)
+                if(grid[X * N + Y - 1] != -1 && Y != 0)
                 {
                     tmp.push_back('a');
                 }
-                else if (grid[X * N + Y + 1] != -1 && Y != 19)
+                if (grid[X * N + Y + 1] != -1 && Y != 19)
                 {
                     tmp.push_back('d');
                 }
@@ -130,11 +130,11 @@ void Bot::move()
                 {
                     tmp.push_back('w');
                 }
-                else if(grid[(X + 1) * N + Y] != -1 && X !=19)
+                if(grid[(X + 1) * N + Y] != -1 && X !=19)
                 {
                     tmp.push_back('s');
                 }
-                else if (grid[X * N + Y + 1] != -1 && Y != 19)
+                if (grid[X * N + Y + 1] != -1 && Y != 19)
                 {
                     tmp.push_back('d');
                 }
@@ -169,11 +169,11 @@ void Bot::move()
             {
                 tmp.push_back('w');
             }
-            else if(grid[(X + 1) * N + Y] != -1 && X !=19)
+            if(grid[(X + 1) * N + Y] != -1 && X !=19)
             {
                 tmp.push_back('s');
             }
-            else if (grid[X * N + Y - 1] != -1 && Y != 0)
+            if (grid[X * N + Y - 1] != -1 && Y != 0)
             {
                 tmp.push_back('d');
             }
