@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/blu.png</file>
+        <file>res/food.png</file>
+        <file>res/GG.png</file>
+        <file>res/grey.png</file>
+        <file>res/no_food.png</file>
+        <file>res/pinky.png</file>
+        <file>res/wall.png</file>
+    </qresource>
+</RCC>
