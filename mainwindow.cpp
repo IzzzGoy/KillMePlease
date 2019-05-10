@@ -43,13 +43,27 @@ void MainWindow::on_connectToGameButton_clicked()
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),SLOT(showpick()));
     timer->start(33);
+    protocolInfo = new ProtocolInfo(&client,&state,&protocolState);
+    pthread_create(&protocolThread,0,protocolServis,static_cast<void*>(protocolInfo));
 }
 
 void MainWindow::showpick()
 {
-    client.protocol();
-    table.Drow(client.coordinates.grid,client.coordinates.X,client.coordinates.Y,scene);
-    ui->scoreCountLable->setText(QString("%1").arg(client.score));
+    if(protocolState)
+    {
+        if(state)
+        {
+            //        client.protocol();
+            table.Drow(client.coordinates.grid,client.coordinates.X,client.coordinates.Y,scene);
+            ui->scoreCountLable->setText(QString("%1").arg(client.score));
+        }
+        else
+        {
+            pthread_join(tmp,NULL);
+            client.close_client();
+            exit(0);
+        }
+    }
 }
 void MainWindow::on_pushButton_2_clicked()
 {
@@ -82,6 +96,8 @@ void MainWindow::on_toGameButton_clicked()
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),SLOT(showpick()));
     timer->start(33);
+    protocolInfo = new ProtocolInfo(&client,&state,&protocolState);
+    pthread_create(&protocolThread,0,protocolServis,static_cast<void*>(protocolInfo));
 }
 
 void* MainWindow::severServis(void* arg)
@@ -104,11 +120,21 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     else if (key == 'A' || key == 'a')
     {
-        client.set_direction('s');
+        client.set_direction('a');
     }
     else if (key == 'D' || key == 'd')
     {
         client.set_direction('d');
     }
 
+}
+
+void *MainWindow::protocolServis(void *arg)
+{
+    ProtocolInfo* info = static_cast<ProtocolInfo*>(arg);
+    while (*info->state)
+    {
+        info->client->protocol();
+        *info->protocolState = true;
+    }
 }

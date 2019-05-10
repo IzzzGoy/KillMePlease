@@ -20,7 +20,21 @@ struct serverInfo
     bool* state;
     serverInfo(Server* server,bool* state)
     {
+
         this->server = server;
+        this->state = state;
+    }
+};
+
+struct ProtocolInfo
+{
+    bool* protocolState;
+    Client* client;
+    bool* state;
+    ProtocolInfo(Client* client,bool* state,bool* protocolState)
+    {
+        this->protocolState = protocolState;
+        this->client = client;
         this->state = state;
     }
 };
@@ -58,6 +72,9 @@ private slots:
 protected:
     void keyPressEvent(QKeyEvent *event);
 private:
+    pthread_t protocolThread;
+    ProtocolInfo* protocolInfo;
+    bool protocolState = false;
     Table table;
     int numbOfPlayers;
     pthread_t tmp;
@@ -65,6 +82,7 @@ private:
     Client client;
     Server server;
     bool state = true;
+    static void* protocolServis(void* arg);
     static void* severServis(void* arg);
 
     Ui::MainWindow *ui;

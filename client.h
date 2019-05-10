@@ -10,6 +10,7 @@
 #include<thread>
 #include<vector>
 #include<unistd.h>
+#include<fcntl.h>
 
 #include"server.h"
 

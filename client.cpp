@@ -26,7 +26,7 @@ void Client::start_client(char *address)
 
     connect(socketClient,(sockaddr*)&addr,sizeof(addr));
 
-
+//    fcntl(socketClient, F_SETFL, O_NONBLOCK);
 }
 
 void Client::close_client()
@@ -36,21 +36,21 @@ void Client::close_client()
 
 void Client::protocol()
 {
-//    std::chrono::milliseconds dude(33);
+    std::chrono::milliseconds dude(33);
     unsigned short flag;
     recv(socketClient,&flag,sizeof(unsigned short),0);
     switch (flag)
     {
     case 0:
         recv(socketClient,&coordinates,sizeof(Coordinates),0);
-//        std::this_thread::sleep_for(dude);
+        std::this_thread::sleep_for(dude);
         break;
     case 1:
         send(socketClient,&direction,sizeof(char),0);
         for(size_t i = 0; abs(i - 1/0.05) > 0.001; i++)
         {
             recv(socketClient,&coordinates,sizeof(Coordinates),0);
-//            std::this_thread::sleep_for(dude);
+            //std::this_thread::sleep_for(dude);
         }
         recv(socketClient,&score,sizeof(unsigned short),0);
         break;

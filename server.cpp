@@ -118,6 +118,7 @@ void *Server::playerServis(void *arg)
     unsigned short flag = 0;
     char directionFromClient;
     unsigned short scoreToClient;
+    //fcntl(info->player->socketPlayer, F_SETFL, O_NONBLOCK);
     while(true)
     {
         switch (*info->state)
@@ -130,7 +131,7 @@ void *Server::playerServis(void *arg)
                 //Флаг о том, что мы ждём начала игры, но необходимо отрисовать поле
                 send(info->player->socketPlayer,info->coordinates,sizeof(coordinates),0);
                 //Отсылаем координаты игроков и само поле
-//                std::this_thread::sleep_for(dude);
+                std::this_thread::sleep_for(dude);
                 break;
         case STARTGAME:
                 flag = 1;
@@ -146,19 +147,19 @@ void *Server::playerServis(void *arg)
                     {
                         info->player->step();
                         send(info->player->socketPlayer,info->coordinates,sizeof(Coordinates),0);
-                        //std::this_thread::sleep_for(dude);
+                        std::this_thread::sleep_for(dude);
                     }
                     info->player->eat();
                     scoreToClient = info->player->get_score();
                     send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
-                    //std::this_thread::sleep_for(dude);
+                    std::this_thread::sleep_for(dude);
                 }
                 else
                 {
                     for(size_t i = 0; abs(i - 1/info->player->get_speed()) > 0.001; i++)
                     {
                         send(info->player->socketPlayer,info->coordinates,sizeof(Coordinates),0);
-                        //std::this_thread::sleep_for(dude);
+                        std::this_thread::sleep_for(dude);
                     }
                     scoreToClient = info->player->get_score();
                     send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
@@ -204,7 +205,7 @@ void *Server::botServis(void *arg)
                     std::this_thread::sleep_for(dude);
                 }
                 info->bot->eat();
-                //std::this_thread::sleep_for(dude);
+                std::this_thread::sleep_for(dude);
                 break;
             case RESULTS:
                 pthread_exit(0);

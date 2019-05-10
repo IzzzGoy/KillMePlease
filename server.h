@@ -12,6 +12,7 @@
 #include<thread>
 #include<vector>
 #include<unistd.h>
+#include <fcntl.h>
 
 #include"player.h"
 #include"semafor.h"
@@ -73,6 +74,7 @@ struct BotInfo
 class Server
 {
 private:
+    pthread_t protocolThread;
     Semafor semafor;
     size_t numbOfPlayers;
     size_t numbOfBots;
