@@ -1,4 +1,5 @@
 #include "server.h"
+#include<iostream>
 
 Server::Server()
 {
@@ -39,11 +40,11 @@ void Server::serverInit(int numb)
     playersInfo.resize(numbOfPlayers);
     bots.resize(numbOfBots);
     BotsInfo.resize(numbOfBots);
+    scores.scores.resize(4);
 
     coordinates.set_grid(grid);
 
     state = START;
-
 }
 
 void Server::doServer()
@@ -58,7 +59,9 @@ void Server::doServer()
         //Создаём объект игрока в куче
         coordinates.set(i,&players[i]->realX,&players[i]->realY);
         //Запоминаем где брать координаты для отсылки на клиент
-        playersInfo[i] = new PlayerInfo(&state,players[i],&coordinates);
+        scores.scores[i] = &players[i]->score;
+        //Запоминаем, где брать очки
+        playersInfo[i] = new PlayerInfo(&state,players[i],&coordinates,&scores);
         //Создаём и заполняем структуру для потоковой функции
         pthread_create(&threads[i],0,playerServis,static_cast<void*>(playersInfo[i]));
         //запускаем поток для игрока
@@ -71,6 +74,8 @@ void Server::doServer()
         //Создаём нового бота
         BotsInfo[j] = new BotInfo(bots[j],&state);
         //Создаём и заполняем структуру для потоковой функции
+        scores.scores[i] = &bots[j]->score;
+        //Запоминаем, где брать очки
         coordinates.set(i,&bots[j]->realX,&bots[j]->realY);
         //Запоминаем где брать координаты для отсылки на клиент
         pthread_create(&threads[i],0,botServis,static_cast<void*>(BotsInfo[j]));
@@ -81,13 +86,13 @@ void Server::doServer()
 
     state = WAITING;
 
-    std::this_thread::sleep_for(waiting);
+    std::this_thread::sleep_for(threadStop);
 
     state = STARTGAME;
 
     int summ;
     //Ждём, когда все точки будут съедены
-    while (summ < 80)
+    while (summ < 222)
     {
         summ = 0;
         for(size_t i = 0; i < players.size(); i++)
@@ -131,9 +136,11 @@ void *Server::playerServis(void *arg)
                 //Флаг о том, что мы ждём начала игры, но необходимо отрисовать поле
                 send(info->player->socketPlayer,info->coordinates,sizeof(coordinates),0);
                 //Отсылаем координаты игроков и само поле
+                send(info->player->socketPlayer,&info->player->ID,sizeof(int),0);
                 std::this_thread::sleep_for(dude);
                 break;
         case STARTGAME:
+                info->player->eat();
                 flag = 1;
                 //Изменяем флаг
                 send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
@@ -149,10 +156,9 @@ void *Server::playerServis(void *arg)
                         send(info->player->socketPlayer,info->coordinates,sizeof(Coordinates),0);
                         std::this_thread::sleep_for(dude);
                     }
-                    info->player->eat();
+
                     scoreToClient = info->player->get_score();
                     send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
-                    std::this_thread::sleep_for(dude);
                 }
                 else
                 {
@@ -164,13 +170,13 @@ void *Server::playerServis(void *arg)
                     scoreToClient = info->player->get_score();
                     send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
                 }
-                //std::this_thread::sleep_for(dude);
                 break;
         case RESULTS:
                 flag = 2;
                 send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
                 scoreToClient = info->player->get_score();
                 send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
+                send(info->player->socketPlayer,info->scores,sizeof(Scores),0);
                 pthread_exit(0);
                 break;
         default:
@@ -198,14 +204,13 @@ void *Server::botServis(void *arg)
                 std::this_thread::sleep_for(dude);
                 break;
             case STARTGAME:
+                info->bot->eat();
                 info->bot->move();
                 for(size_t i = 0; abs(i - 1/info->bot->get_speed()) > 0.001; i++)
                 {
                     info->bot->step();
                     std::this_thread::sleep_for(dude);
                 }
-                info->bot->eat();
-                std::this_thread::sleep_for(dude);
                 break;
             case RESULTS:
                 pthread_exit(0);

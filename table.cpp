@@ -2,14 +2,6 @@
 #include <iostream>
 Table::~Table()
 {
-    for(size_t i = 0; table.size(); i++)
-    {
-        delete table[i];
-    }
-    for(size_t i = 0; i < players.size(); i++)
-    {
-        delete players[i];
-    }
 }
 
 Table::Table()
@@ -23,22 +15,12 @@ Table::Table()
     blu.load(":/res/blu.png");
     players.resize(4);
     table.resize(400);
+    playersTexture.resize(3);
+
 }
 
-void Table::Drow(short int* grid,vector<double*> X,vector<double*> Y, QGraphicsScene *scene)
+void Table::Drow(short int* grid,vector<double*> X,vector<double*> Y, QGraphicsScene *scene,int id)
 {
-//    for(size_t i = 0; table.size(); i++)
-//    {
-//        table[i]->
-//    }
-//    for(size_t i = 0; i < players.size(); i++)
-//    {
-//        delete players[i];
-//    }
-//    std::cout << "Scene in table address: "<<scene;
-//    scene->clear();
-//    scene = new QGraphicsScene;
-//    std::cout << "Scene in table address: "<<scene;
     for(size_t x = 0; x < 20; x++)
     {
         for(size_t y = 0; y < 20; y++)
@@ -66,10 +48,24 @@ void Table::Drow(short int* grid,vector<double*> X,vector<double*> Y, QGraphicsS
             }
         }
     }
-    players[0] = scene->addPixmap(GG);
-    players[1] = scene->addPixmap(pinky);
-    players[2] = scene->addPixmap(blu);
-    players[3] = scene->addPixmap(grey);
+
+    players[id] = scene->addPixmap(GG);
+    playersTexture[0] = pinky;
+    playersTexture[1] = blu;
+    playersTexture[2] = grey;
+
+    for(size_t i = 0,j = 0; i < 4; i++ )
+    {
+        if(i != id)
+        {
+            players[i] = scene->addPixmap(playersTexture[j]);
+            j++;
+        }
+    }
+
+//    players[1] = scene->addPixmap(pinky);
+//    players[2] = scene->addPixmap(blu);
+//    players[3] = scene->addPixmap(grey);
 
     for(size_t i = 0;i < 4;i++)
     {

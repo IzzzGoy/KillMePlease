@@ -14,9 +14,9 @@ private:
     short* grid;
     int X,Y;
     double speed;
-    unsigned short score;
     char direction;
 public:
+    unsigned short score;
     double realX,realY;
     unsigned short get_score();
     double get_speed();

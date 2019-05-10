@@ -118,7 +118,7 @@ Player::Player(int socket, short *grid, int id, Semafor *semafor)
     realX = X;
     realY = Y;
     score = 0;
-    speed = 0.05;
+    speed = 0.1;
     direction = 'w';
     this->semafor = semafor;
     ID = id;

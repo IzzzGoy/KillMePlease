@@ -31,6 +31,8 @@ private:
     char direction;
 
 public:
+    Scores scores;
+    int id;
     unsigned short score;
     Coordinates coordinates;
     Client();

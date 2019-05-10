@@ -72,6 +72,7 @@ private slots:
 protected:
     void keyPressEvent(QKeyEvent *event);
 private:
+    void sow_results();
     pthread_t protocolThread;
     ProtocolInfo* protocolInfo;
     bool protocolState = false;

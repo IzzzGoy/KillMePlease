@@ -21,12 +21,13 @@ private:
     QPixmap grey;
     QPixmap pinky;
     QPixmap blu;
+    vector<QPixmap> playersTexture;
     vector<QGraphicsPixmapItem*> players;
     vector<QGraphicsPixmapItem*> table;
 public:
     ~Table();
     Table();
-    void Drow(short int* grid,vector<double*> X,vector<double*> Y,QGraphicsScene* scene);
+    void Drow(short int* grid, vector<double*> X, vector<double*> Y, QGraphicsScene* scene, int id);
 };
 
 #endif // TABLE_H

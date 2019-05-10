@@ -228,7 +228,7 @@ Bot::Bot(short *grid, Semafor *semafor)
     realX = X;
     realY = Y;
     score = 0;
-    speed = 0.05;
+    speed = 0.1;
     int tmp = rand() % 4;
     switch (tmp)
     {

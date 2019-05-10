@@ -43,19 +43,19 @@ void Client::protocol()
     {
     case 0:
         recv(socketClient,&coordinates,sizeof(Coordinates),0);
-        std::this_thread::sleep_for(dude);
+        recv(socketClient,&id,sizeof(int),0);
         break;
     case 1:
         send(socketClient,&direction,sizeof(char),0);
-        for(size_t i = 0; abs(i - 1/0.05) > 0.001; i++)
+        for(size_t i = 0; abs(i - 1/0.1) > 0.001; i++)
         {
             recv(socketClient,&coordinates,sizeof(Coordinates),0);
-            //std::this_thread::sleep_for(dude);
         }
         recv(socketClient,&score,sizeof(unsigned short),0);
         break;
     case 2:
         recv(socketClient,&score,sizeof(unsigned short),0);
+        recv(socketClient,&scores,sizeof(Scores),0);
         break;
     default:
         break;

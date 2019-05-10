@@ -26,6 +26,12 @@ enum State
     RESULTS
 };
 
+struct Scores
+{
+    std::vector<unsigned short*> scores;
+    Scores() {}
+};
+
 struct Coordinates
 {
     std::vector<double*> X;
@@ -49,14 +55,16 @@ struct Coordinates
 
 struct PlayerInfo
 {
+    Scores* scores;
     State* state;
     Player* player;
     Coordinates* coordinates;
-    PlayerInfo(State* state,Player* player,Coordinates* coordinates)
+    PlayerInfo(State* state,Player* player,Coordinates* coordinates,Scores* scores)
     {
         this->coordinates = coordinates;
         this->player = player;
         this->state = state;
+        this->scores = scores;
     }
 };
 
@@ -74,6 +82,7 @@ struct BotInfo
 class Server
 {
 private:
+    Scores scores;
     pthread_t protocolThread;
     Semafor semafor;
     size_t numbOfPlayers;

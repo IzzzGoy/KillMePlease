@@ -10,11 +10,11 @@ class Player
 private:
     short* grid;
     int X,Y;
-    unsigned short score;
     double speed;
     char direction;
     Semafor* semafor;
 public:
+    unsigned short score;
     int ID;
     int socketPlayer;
     double realX,realY;
