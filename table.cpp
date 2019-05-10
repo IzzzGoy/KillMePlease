@@ -1,5 +1,17 @@
 #include "table.h"
 #include <iostream>
+Table::~Table()
+{
+    for(size_t i = 0; table.size(); i++)
+    {
+        delete table[i];
+    }
+    for(size_t i = 0; i < players.size(); i++)
+    {
+        delete players[i];
+    }
+}
+
 Table::Table()
 {
     food.load(":/res/food.png");
@@ -10,10 +22,22 @@ Table::Table()
     pinky.load(":/res/pinky.png");
     blu.load(":/res/blu.png");
     players.resize(4);
+    table.resize(400);
 }
 
 void Table::Drow(short int* grid,vector<double*> X,vector<double*> Y, QGraphicsScene *scene)
 {
+//    for(size_t i = 0; table.size(); i++)
+//    {
+//        table[i]->
+//    }
+//    for(size_t i = 0; i < players.size(); i++)
+//    {
+//        delete players[i];
+//    }
+//    std::cout << "Scene in table address: "<<scene;
+//    scene->clear();
+//    scene = new QGraphicsScene;
 //    std::cout << "Scene in table address: "<<scene;
     for(size_t x = 0; x < 20; x++)
     {
@@ -24,18 +48,21 @@ void Table::Drow(short int* grid,vector<double*> X,vector<double*> Y, QGraphicsS
                 QGraphicsPixmapItem* tmp;
                 tmp = scene->addPixmap(wall);
                 tmp->setPos(x*20,y*20);
+                //table[x + 20 * y] = tmp;
             }
             else if(grid[x + 20 * y] == 0)
             {
                 QGraphicsPixmapItem* tmp;
                 tmp = scene->addPixmap(no_food);
                 tmp->setPos(x*20,y*20);
+                //table[x + 20 * y] = tmp;
             }
             else if(grid[x + 20 * y] == 3)
             {
                 QGraphicsPixmapItem* tmp;
                 tmp = scene->addPixmap(food);
                 tmp->setPos(x*20,y*20);
+                //table[x + 20 * y] = tmp;
             }
         }
     }

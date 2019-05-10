@@ -21,7 +21,7 @@ void Client::start_client(char *address)
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(2488);
+    addr.sin_port = htons(1488);
     addr.sin_addr.s_addr = inet_addr(address);
 
     connect(socketClient,(sockaddr*)&addr,sizeof(addr));

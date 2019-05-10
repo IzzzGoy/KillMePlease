@@ -12,12 +12,11 @@
 class Semafor
 {
 private:
-    struct sembuf op;
+
     int semId;
 public:
-    void Get(int Number);
+    void Give(int Number);
     void Take(int Number);
-    void Stop();
     ~Semafor();
     Semafor();
 };

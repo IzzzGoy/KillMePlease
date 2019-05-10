@@ -20,7 +20,7 @@ void Server::serverInit(int numb)
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(2488);
+    addr.sin_port = htons(1488);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     if((bind(socketServer,(sockaddr*)&addr,sizeof(addr)))<0)

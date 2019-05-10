@@ -203,8 +203,7 @@ void Bot::move()
 
 void Bot::eat()
 {
-    semafor->Stop();
-    semafor->Get(X * 20 + Y);
+    semafor->Give(X * 20 + Y);
     if(grid[X * 20 + Y] == 3)
     {
         score++;

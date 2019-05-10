@@ -22,7 +22,9 @@ private:
     QPixmap pinky;
     QPixmap blu;
     vector<QGraphicsPixmapItem*> players;
+    vector<QGraphicsPixmapItem*> table;
 public:
+    ~Table();
     Table();
     void Drow(short int* grid,vector<double*> X,vector<double*> Y,QGraphicsScene* scene);
 };

@@ -49,13 +49,16 @@ void MainWindow::on_connectToGameButton_clicked()
 
 void MainWindow::showpick()
 {
+    std::chrono::milliseconds dude(100);
     if(protocolState)
     {
         if(state)
         {
-            //        client.protocol();
+            scene->clear();
+            //scene = new QGraphicsScene;
+            //ui->graphicsView->setScene(scene);
             table.Drow(client.coordinates.grid,client.coordinates.X,client.coordinates.Y,scene);
-            ui->scoreCountLable->setText(QString("%1").arg(client.score));
+            ui->scoreCountLable->setText(QString("%1").arg(client.score));           
         }
         else
         {
