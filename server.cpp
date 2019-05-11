@@ -8,6 +8,26 @@ Server::Server()
 
 Server::~Server()
 {
+    for(size_t i = 0; i < players.size();i++)
+    {
+        delete players[i];
+    }
+    players.clear();
+    for(size_t i = 0; i < playersInfo.size();i++)
+    {
+        delete playersInfo[i];
+    }
+    playersInfo.clear();
+    for(size_t i = 0; i < bots.size();i++)
+    {
+        delete bots[i];
+    }
+    bots.clear();
+    for(size_t i = 0; i < BotsInfo.size();i++)
+    {
+        delete BotsInfo[i];
+    }
+    BotsInfo.clear();
     close(socketServer);
 }
 
