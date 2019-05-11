@@ -192,6 +192,11 @@ void *Server::playerServis(void *arg)
 
                     scoreToClient = info->player->get_score();
                     send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
+                    info->scores->make_frame();
+                    for(size_t i = 0; i < 4; i++)
+                    {
+                        send(info->player->socketPlayer,&info->scores->frameScores[i],sizeof(unsigned short),0);
+                    }
                 }
                 else
                 {
@@ -207,8 +212,13 @@ void *Server::playerServis(void *arg)
                         }
                         std::this_thread::sleep_for(dude);
                     }
+                    info->scores->make_frame();
                     scoreToClient = info->player->get_score();
                     send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
+                    for(size_t i = 0; i < 4; i++)
+                    {
+                        send(info->player->socketPlayer,&info->scores->frameScores[i],sizeof(unsigned short),0);
+                    }
                 }
                 break;
         case RESULTS:

@@ -4,6 +4,10 @@ Client::Client()
 {
     frameX.resize(4);
     frameY.resize(4);
+    for(size_t i = 0; i < 4; i++)
+    {
+        scores.frameScores[i] = 0;
+    }
 }
 
 Client::~Client()
@@ -66,6 +70,10 @@ bool Client::protocol()
             }
         }
         recv(socketClient,&score,sizeof(unsigned short),0);
+        for(size_t i = 0; i < 4; i++)
+        {
+            recv(socketClient,&scores.frameScores[i],sizeof(unsigned short),0);
+        }
         return true;
         break;
     case 2:

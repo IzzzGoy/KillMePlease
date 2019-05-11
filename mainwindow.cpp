@@ -56,19 +56,19 @@ void MainWindow::showpick()
     {
         if(state)
         {
+            sow_results();
             scene->clear();
-            //scene = new QGraphicsScene;
-            //ui->graphicsView->setScene(scene);
             table.Drow(client.grid,client.frameX,client.frameY,scene,client.id);
             ui->scoreCountLable->setText(QString("%1").arg(client.score));
         }
         else
         {
+            ui->gameOverLable->setText(QString::number(client.id));
             //scene->clear();
             //ui->stackedWidget->setCurrentIndex(4);
             //pthread_join(tmp,NULL);
             pthread_join(protocolThread,NULL);
-            sow_results();
+            sleep(5);
             client.close_client();
             exit(0);
         }
@@ -140,7 +140,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::sow_results()
 {
-    ui->stackedWidget->setCurrentIndex(4);
     if(client.id == 0)
     {
         ui->firstPlayerNameLable->setText(QString("You"));
@@ -177,12 +176,10 @@ void MainWindow::sow_results()
         ui->foursPlayerNameLable->setText(QString("Player 4"));
     }
     ui->foursPlayerResultsLable->setText(QString("%1").arg(client.scores.frameScores[3]));
-    sleep(3);
 }
 
 void *MainWindow::protocolServis(void *arg)
 {
-    std::chrono::milliseconds dude(10);
     ProtocolInfo* info = static_cast<ProtocolInfo*>(arg);
     while (info->client->protocol())
     {

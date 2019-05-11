@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="menu">
      <widget class="QPushButton" name="newGameButton">
@@ -189,32 +189,30 @@
        <string/>
       </property>
      </widget>
-    </widget>
-    <widget class="QWidget" name="page">
-     <widget class="QLabel" name="gameOverLabel">
+     <widget class="QLabel" name="gameOverLable">
       <property name="geometry">
        <rect>
-        <x>120</x>
+        <x>160</x>
         <y>50</y>
-        <width>241</width>
-        <height>51</height>
+        <width>251</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <pointsize>33</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="text">
-       <string>Game Over</string>
+       <string/>
       </property>
      </widget>
      <widget class="QLabel" name="firstPlayerNameLable">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>160</y>
-        <width>54</width>
+        <x>0</x>
+        <y>40</y>
+        <width>50</width>
         <height>17</height>
        </rect>
       </property>
@@ -225,10 +223,10 @@
      <widget class="QLabel" name="firstPlayerResultsLable">
       <property name="geometry">
        <rect>
-        <x>340</x>
-        <y>160</y>
-        <width>54</width>
-        <height>17</height>
+        <x>50</x>
+        <y>40</y>
+        <width>50</width>
+        <height>16</height>
        </rect>
       </property>
       <property name="text">
@@ -238,9 +236,9 @@
      <widget class="QLabel" name="secondPlayerNameLable">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>210</y>
-        <width>54</width>
+        <x>0</x>
+        <y>60</y>
+        <width>50</width>
         <height>17</height>
        </rect>
       </property>
@@ -251,9 +249,9 @@
      <widget class="QLabel" name="secondPlayerResultsLable">
       <property name="geometry">
        <rect>
-        <x>340</x>
-        <y>210</y>
-        <width>54</width>
+        <x>50</x>
+        <y>60</y>
+        <width>50</width>
         <height>17</height>
        </rect>
       </property>
@@ -264,22 +262,9 @@
      <widget class="QLabel" name="thirdPlayerNameLable">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>260</y>
-        <width>54</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="thirdPlayerResultsLable">
-      <property name="geometry">
-       <rect>
-        <x>340</x>
-        <y>260</y>
-        <width>54</width>
+        <x>0</x>
+        <y>80</y>
+        <width>50</width>
         <height>17</height>
        </rect>
       </property>
@@ -290,9 +275,22 @@
      <widget class="QLabel" name="foursPlayerNameLable">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>310</y>
-        <width>54</width>
+        <x>0</x>
+        <y>100</y>
+        <width>50</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="thirdPlayerResultsLable">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>80</y>
+        <width>50</width>
         <height>17</height>
        </rect>
       </property>
@@ -303,9 +301,9 @@
      <widget class="QLabel" name="foursPlayerResultsLable">
       <property name="geometry">
        <rect>
-        <x>340</x>
-        <y>310</y>
-        <width>54</width>
+        <x>50</x>
+        <y>100</y>
+        <width>50</width>
         <height>17</height>
        </rect>
       </property>
@@ -313,7 +311,20 @@
        <string/>
       </property>
      </widget>
+     <zorder>graphicsView</zorder>
+     <zorder>scoreLabel</zorder>
+     <zorder>scoreCountLable</zorder>
+     <zorder>gameOverLable</zorder>
+     <zorder>secondPlayerResultsLable</zorder>
+     <zorder>thirdPlayerResultsLable</zorder>
+     <zorder>secondPlayerNameLable</zorder>
+     <zorder>foursPlayerNameLable</zorder>
+     <zorder>firstPlayerNameLable</zorder>
+     <zorder>thirdPlayerNameLable</zorder>
+     <zorder>foursPlayerResultsLable</zorder>
+     <zorder>firstPlayerResultsLable</zorder>
     </widget>
+    <widget class="QWidget" name="page"/>
    </widget>
   </widget>
  </widget>
