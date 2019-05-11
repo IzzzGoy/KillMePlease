@@ -2,7 +2,8 @@
 
 Client::Client()
 {
-
+    frameX.resize(4);
+    frameY.resize(4);
 }
 
 Client::~Client()
@@ -21,7 +22,7 @@ void Client::start_client(char *address)
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(1488);
+    addr.sin_port = htons(9488);
     addr.sin_addr.s_addr = inet_addr(address);
 
     connect(socketClient,(sockaddr*)&addr,sizeof(addr));
@@ -34,7 +35,7 @@ void Client::close_client()
     close(socketClient);
 }
 
-void Client::protocol()
+bool Client::protocol()
 {
     std::chrono::milliseconds dude(33);
     unsigned short flag;
@@ -42,20 +43,40 @@ void Client::protocol()
     switch (flag)
     {
     case 0:
-        recv(socketClient,&coordinates,sizeof(Coordinates),0);
+
+        recv(socketClient,grid,sizeof(short[400]),0);
+        for(size_t i = 0; i < 4; i++)
+        {
+            recv(socketClient,&frameX[i],sizeof(double),0);
+            recv(socketClient,&frameY[i],sizeof(double),0);
+        }
         recv(socketClient,&id,sizeof(int),0);
+        return true;
         break;
     case 1:
         send(socketClient,&direction,sizeof(char),0);
         for(size_t i = 0; abs(i - 1/0.1) > 0.001; i++)
         {
-            recv(socketClient,&coordinates,sizeof(Coordinates),0);
+//            recv(socketClient,&coordinates,sizeof(Coordinates),0);
+            recv(socketClient,grid,sizeof(short[400]),0);
+            for(size_t i = 0; i < 4; i++)
+            {
+                recv(socketClient,&frameX[i],sizeof(double),0);
+                recv(socketClient,&frameY[i],sizeof(double),0);
+            }
         }
         recv(socketClient,&score,sizeof(unsigned short),0);
+        return true;
         break;
     case 2:
         recv(socketClient,&score,sizeof(unsigned short),0);
-        recv(socketClient,&scores,sizeof(Scores),0);
+        //recv(socketClient,&scores,sizeof(Scores),0);
+        for(size_t i = 0; i < 4; i++)
+        {
+            recv(socketClient,&scores.frameScores[i],sizeof(unsigned short),0);
+        }
+        //recv(socketClient,scores.frameScores,sizeof(Scores),0);
+        return false;
         break;
     default:
         break;

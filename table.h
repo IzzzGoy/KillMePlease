@@ -27,7 +27,7 @@ private:
 public:
     ~Table();
     Table();
-    void Drow(short int* grid, vector<double*> X, vector<double*> Y, QGraphicsScene* scene, int id);
+    void Drow(short int* grid, vector<double> X, vector<double> Y, QGraphicsScene* scene, int id);
 };
 
 #endif // TABLE_H
