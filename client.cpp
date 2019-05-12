@@ -69,7 +69,6 @@ bool Client::protocol()
                 recv(socketClient,&frameY[i],sizeof(double),0);
             }
         }
-        recv(socketClient,&score,sizeof(unsigned short),0);
         for(size_t i = 0; i < 4; i++)
         {
             recv(socketClient,&scores.frameScores[i],sizeof(unsigned short),0);
@@ -77,13 +76,10 @@ bool Client::protocol()
         return true;
         break;
     case 2:
-        recv(socketClient,&score,sizeof(unsigned short),0);
-        //recv(socketClient,&scores,sizeof(Scores),0);
         for(size_t i = 0; i < 4; i++)
         {
             recv(socketClient,&scores.frameScores[i],sizeof(unsigned short),0);
         }
-        //recv(socketClient,scores.frameScores,sizeof(Scores),0);
         return false;
         break;
     default:

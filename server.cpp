@@ -143,7 +143,6 @@ void *Server::playerServis(void *arg)
     unsigned short flag = 0;
     char directionFromClient;
     unsigned short scoreToClient;
-    //fcntl(info->player->socketPlayer, F_SETFL, O_NONBLOCK);
     while(true)
     {
         switch (*info->state)
@@ -189,9 +188,6 @@ void *Server::playerServis(void *arg)
                         }
                         std::this_thread::sleep_for(dude);
                     }
-
-                    scoreToClient = info->player->get_score();
-                    send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
                     info->scores->make_frame();
                     for(size_t i = 0; i < 4; i++)
                     {
@@ -213,8 +209,6 @@ void *Server::playerServis(void *arg)
                         std::this_thread::sleep_for(dude);
                     }
                     info->scores->make_frame();
-                    scoreToClient = info->player->get_score();
-                    send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
                     for(size_t i = 0; i < 4; i++)
                     {
                         send(info->player->socketPlayer,&info->scores->frameScores[i],sizeof(unsigned short),0);
@@ -224,15 +218,11 @@ void *Server::playerServis(void *arg)
         case RESULTS:
                 flag = 2;
                 send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
-                scoreToClient = info->player->get_score();
-                send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
                 info->scores->make_frame();
-//                send(info->player->socketPlayer,info->scores,sizeof(Scores),0);
                 for(size_t i = 0; i < 4; i++)
                 {
                     send(info->player->socketPlayer,&info->scores->frameScores[i],sizeof(unsigned short),0);
                 }
-//                send(info->player->socketPlayer,&info->scores->frameScores,sizeof(info->scores->frameScores),0);
                 pthread_exit(0);
                 break;
         default:

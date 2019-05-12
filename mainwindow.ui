@@ -163,32 +163,6 @@
        </rect>
       </property>
      </widget>
-     <widget class="QLabel" name="scoreLabel">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>31</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Score</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="scoreCountLable">
-      <property name="geometry">
-       <rect>
-        <x>50</x>
-        <y>10</y>
-        <width>21</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
      <widget class="QLabel" name="gameOverLable">
       <property name="geometry">
        <rect>
@@ -312,8 +286,6 @@
       </property>
      </widget>
      <zorder>graphicsView</zorder>
-     <zorder>scoreLabel</zorder>
-     <zorder>scoreCountLable</zorder>
      <zorder>gameOverLable</zorder>
      <zorder>secondPlayerResultsLable</zorder>
      <zorder>thirdPlayerResultsLable</zorder>

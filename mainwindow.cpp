@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete scene;
     delete timer;
     delete ui;
 }
@@ -41,7 +42,6 @@ void MainWindow::on_connectToGameButton_clicked()
     QByteArray tmp = ui->lineEdit->text().toLocal8Bit();
     client.start_client(tmp.data());
     ui->stackedWidget->setCurrentIndex(3);
-    ui->scoreCountLable->setText(QString("%1").arg(0));
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),SLOT(showpick()));
     timer->start(33);
@@ -59,14 +59,10 @@ void MainWindow::showpick()
             sow_results();
             scene->clear();
             table.Drow(client.grid,client.frameX,client.frameY,scene,client.id);
-            ui->scoreCountLable->setText(QString("%1").arg(client.score));
         }
         else
         {
             ui->gameOverLable->setText(QString::number(client.id));
-            //scene->clear();
-            //ui->stackedWidget->setCurrentIndex(4);
-            //pthread_join(tmp,NULL);
             pthread_join(protocolThread,NULL);
             sleep(5);
             client.close_client();
@@ -97,7 +93,6 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_toGameButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(3);
-    ui->scoreCountLable->setText(QString("%1").arg(0));
     server.serverInit(numbOfPlayers);
     serverInfo* info = new serverInfo(&server,&state);
     pthread_create(&tmp,0,severServis,static_cast<void*>(info));
