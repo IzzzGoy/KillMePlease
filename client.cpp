@@ -26,7 +26,7 @@ void Client::start_client(char *address)
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(9488);
+    addr.sin_port = htons(1488);
     addr.sin_addr.s_addr = inet_addr(address);
 
     connect(socketClient,(sockaddr*)&addr,sizeof(addr));
@@ -48,12 +48,18 @@ bool Client::protocol()
     {
     case 0:
 
-        recv(socketClient,grid,sizeof(short[400]),0);
+        //recv(socketClient,grid,sizeof(short[400]),0);
+        for(size_t i = 0; i < 400; i++)
+        {
+            recv(socketClient,&grid[i],sizeof(short),0);
+        }
         for(size_t i = 0; i < 4; i++)
         {
             recv(socketClient,&frameX[i],sizeof(double),0);
             recv(socketClient,&frameY[i],sizeof(double),0);
         }
+        std::cout<<"FrameX is: "<<&frameX<<std::endl;
+        std::cout<<"FrameY is: "<<&frameY<<std::endl;
         recv(socketClient,&id,sizeof(int),0);
         return true;
         break;
@@ -62,7 +68,11 @@ bool Client::protocol()
         for(size_t i = 0; abs(i - 1/0.1) > 0.001; i++)
         {
 //            recv(socketClient,&coordinates,sizeof(Coordinates),0);
-            recv(socketClient,grid,sizeof(short[400]),0);
+            //recv(socketClient,grid,sizeof(short[400]),0);
+            for(size_t i = 0; i < 400; i++)
+            {
+                recv(socketClient,&grid[i],sizeof(short),0);
+            }
             for(size_t i = 0; i < 4; i++)
             {
                 recv(socketClient,&frameX[i],sizeof(double),0);

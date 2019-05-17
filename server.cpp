@@ -41,7 +41,7 @@ void Server::serverInit(int numb)
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(9488);
+    addr.sin_port = htons(1488);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     if((bind(socketServer,(sockaddr*)&addr,sizeof(addr)))<0)
@@ -155,7 +155,11 @@ void *Server::playerServis(void *arg)
                 //Флаг о том, что мы ждём начала игры, но необходимо отрисовать поле
                 info->coordinates->make_frame();
                 //Создаём координаты фрейма
-                send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
+                //send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
+                for(size_t i = 0; i < 400; i++)
+                {
+                    send(info->player->socketPlayer,&info->coordinates->grid[i],sizeof(short),0);
+                }
                 for(size_t i = 0; i < 4; i++)
                 {
                     send(info->player->socketPlayer,&info->coordinates->frameX[i],sizeof(double),0);
@@ -180,7 +184,11 @@ void *Server::playerServis(void *arg)
                     {
                         info->player->step();
                         info->coordinates->make_frame();
-                        send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
+                        //send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
+                        for(size_t i = 0; i < 400; i++)
+                        {
+                            send(info->player->socketPlayer,&info->coordinates->grid[i],sizeof(short),0);
+                        }
                         for(size_t i = 0; i < 4; i++)
                         {
                             send(info->player->socketPlayer,&info->coordinates->frameX[i],sizeof(double),0);
