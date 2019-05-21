@@ -1,11 +1,8 @@
 #include "server.h"
 #include<iostream>
-
 Server::Server()
 {
-
 }
-
 Server::~Server()
 {
     for(size_t i = 0; i < players.size();i++)
@@ -30,7 +27,6 @@ Server::~Server()
     BotsInfo.clear();
     close(socketServer);
 }
-
 void Server::serverInit(int numb)
 {
     socketServer = socket(AF_INET,SOCK_STREAM,0);
@@ -39,34 +35,25 @@ void Server::serverInit(int numb)
         perror("Bad socket");
         exit(-1);
     }
-
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(1488);
-    addr.sin_addr.s_addr = INADDR_ANY;
-
+    addr.sin_port = htons(9000);
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
     if((bind(socketServer,(sockaddr*)&addr,sizeof(addr)))<0)
     {
         perror("Bad bind!");
         exit(-1);
     }
-
     listen(socketServer,10);
-
     numbOfPlayers = numb;
     numbOfBots = 4 - numb;
-
     threads.resize(4);
     players.resize(numbOfPlayers);
     playersInfo.resize(numbOfPlayers);
     bots.resize(numbOfBots);
     BotsInfo.resize(numbOfBots);
-//    scores.scores.resize(4);
-
     coordinates.set_grid(grid);
-
     state = START;
 }
-
 void Server::doServer()
 {
     std::chrono::seconds threadStop(1);
@@ -103,13 +90,9 @@ void Server::doServer()
         std::this_thread::sleep_for(threadStop);
         //Ждём секунду, необходимо для генерации случайных координат
     }
-
     state = WAITING;
-
     std::this_thread::sleep_for(threadStop);
-
     state = STARTGAME;
-
     int summ;
     //Ждём, когда все точки будут съедены
     while (summ < 222)
@@ -125,17 +108,13 @@ void Server::doServer()
         }
         std::this_thread::sleep_for(threadStop);
     }
-
     state = RESULTS;
-
     for(size_t i = 0; i < 4; i++)
     {
         pthread_join(threads[i],NULL);
     }
     close(socketServer);
-
 }
-
 void *Server::playerServis(void *arg)
 {
     PlayerInfo* info = static_cast<PlayerInfo*>(arg);
@@ -155,11 +134,7 @@ void *Server::playerServis(void *arg)
                 //Флаг о том, что мы ждём начала игры, но необходимо отрисовать поле
                 info->coordinates->make_frame();
                 //Создаём координаты фрейма
-                //send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
-                for(size_t i = 0; i < 400; i++)
-                {
-                    send(info->player->socketPlayer,&info->coordinates->grid[i],sizeof(short),0);
-                }
+                send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
                 for(size_t i = 0; i < 4; i++)
                 {
                     send(info->player->socketPlayer,&info->coordinates->frameX[i],sizeof(double),0);
@@ -184,11 +159,7 @@ void *Server::playerServis(void *arg)
                     {
                         info->player->step();
                         info->coordinates->make_frame();
-                        //send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
-                        for(size_t i = 0; i < 400; i++)
-                        {
-                            send(info->player->socketPlayer,&info->coordinates->grid[i],sizeof(short),0);
-                        }
+                        send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
                         for(size_t i = 0; i < 4; i++)
                         {
                             send(info->player->socketPlayer,&info->coordinates->frameX[i],sizeof(double),0);
@@ -238,15 +209,11 @@ void *Server::playerServis(void *arg)
                 break;
         }
     }
-
-
 }
-
 void *Server::botServis(void *arg)
 {
     BotInfo* info = static_cast<BotInfo*>(arg);
     std::chrono::milliseconds dude(33);
-
     while (true)
     {
         switch (*info->state)
@@ -273,5 +240,4 @@ void *Server::botServis(void *arg)
                 break;
         }
     }
-
 }
