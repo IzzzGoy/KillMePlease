@@ -8,26 +8,6 @@ Server::Server()
 
 Server::~Server()
 {
-    for(size_t i = 0; i < players.size();i++)
-    {
-        delete players[i];
-    }
-    players.clear();
-    for(size_t i = 0; i < playersInfo.size();i++)
-    {
-        delete playersInfo[i];
-    }
-    playersInfo.clear();
-    for(size_t i = 0; i < bots.size();i++)
-    {
-        delete bots[i];
-    }
-    bots.clear();
-    for(size_t i = 0; i < BotsInfo.size();i++)
-    {
-        delete BotsInfo[i];
-    }
-    BotsInfo.clear();
     close(socketServer);
 }
 
@@ -41,7 +21,7 @@ void Server::serverInit(int numb)
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(1488);
+    addr.sin_port = htons(3488);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     if((bind(socketServer,(sockaddr*)&addr,sizeof(addr)))<0)
@@ -60,7 +40,7 @@ void Server::serverInit(int numb)
     playersInfo.resize(numbOfPlayers);
     bots.resize(numbOfBots);
     BotsInfo.resize(numbOfBots);
-//    scores.scores.resize(4);
+    scores.scores.resize(4);
 
     coordinates.set_grid(grid);
 
@@ -143,6 +123,7 @@ void *Server::playerServis(void *arg)
     unsigned short flag = 0;
     char directionFromClient;
     unsigned short scoreToClient;
+    //fcntl(info->player->socketPlayer, F_SETFL, O_NONBLOCK);
     while(true)
     {
         switch (*info->state)
@@ -153,17 +134,11 @@ void *Server::playerServis(void *arg)
         case WAITING:
                 send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
                 //Флаг о том, что мы ждём начала игры, но необходимо отрисовать поле
-                info->coordinates->make_frame();
-                //Создаём координаты фрейма
-                //send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
-                for(size_t i = 0; i < 400; i++)
-                {
-                    send(info->player->socketPlayer,&info->coordinates->grid[i],sizeof(short),0);
-                }
                 for(size_t i = 0; i < 4; i++)
                 {
-                    send(info->player->socketPlayer,&info->coordinates->frameX[i],sizeof(double),0);
-                    send(info->player->socketPlayer,&info->coordinates->frameY[i],sizeof(double),0);
+                    send(info->player->socketPlayer,info->coordinates->X[i],sizeof(*info->coordinates->X[i]),0);
+                    send(info->player->socketPlayer,info->coordinates->Y[i],sizeof(*info->coordinates->Y[i]),0);
+                    send(info->player->socketPlayer,info->coordinates->grid,sizeof(grid),0);
                 }
                 //Отсылаем координаты игроков и само поле
                 send(info->player->socketPlayer,&info->player->ID,sizeof(int),0);
@@ -183,53 +158,40 @@ void *Server::playerServis(void *arg)
                     for(size_t i = 0; abs(i - 1/info->player->get_speed()) > 0.001; i++)
                     {
                         info->player->step();
-                        info->coordinates->make_frame();
-                        //send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
-                        for(size_t i = 0; i < 400; i++)
-                        {
-                            send(info->player->socketPlayer,&info->coordinates->grid[i],sizeof(short),0);
-                        }
                         for(size_t i = 0; i < 4; i++)
                         {
-                            send(info->player->socketPlayer,&info->coordinates->frameX[i],sizeof(double),0);
-                            send(info->player->socketPlayer,&info->coordinates->frameY[i],sizeof(double),0);
+                            send(info->player->socketPlayer,info->coordinates->X[i],sizeof(double),0);
+                            send(info->player->socketPlayer,info->coordinates->Y[i],sizeof(double),0);
                         }
                         std::this_thread::sleep_for(dude);
                     }
-                    info->scores->make_frame();
-                    for(size_t i = 0; i < 4; i++)
-                    {
-                        send(info->player->socketPlayer,&info->scores->frameScores[i],sizeof(unsigned short),0);
-                    }
+
+                    scoreToClient = info->player->get_score();
+                    send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
                 }
                 else
                 {
                     for(size_t i = 0; abs(i - 1/info->player->get_speed()) > 0.001; i++)
                     {
-                        info->coordinates->make_frame();
-                        //send(info->player->socketPlayer,info->coordinates,sizeof(Coordinates),0);
-                        send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
                         for(size_t i = 0; i < 4; i++)
                         {
-                            send(info->player->socketPlayer,&info->coordinates->frameX[i],sizeof(double),0);
-                            send(info->player->socketPlayer,&info->coordinates->frameY[i],sizeof(double),0);
+                            send(info->player->socketPlayer,info->coordinates->X[i],sizeof(double),0);
+                            send(info->player->socketPlayer,info->coordinates->Y[i],sizeof(double),0);
                         }
                         std::this_thread::sleep_for(dude);
                     }
-                    info->scores->make_frame();
-                    for(size_t i = 0; i < 4; i++)
-                    {
-                        send(info->player->socketPlayer,&info->scores->frameScores[i],sizeof(unsigned short),0);
-                    }
+                    scoreToClient = info->player->get_score();
+                    send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
                 }
                 break;
         case RESULTS:
                 flag = 2;
                 send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
-                info->scores->make_frame();
+                scoreToClient = info->player->get_score();
+                send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
                 for(size_t i = 0; i < 4; i++)
                 {
-                    send(info->player->socketPlayer,&info->scores->frameScores[i],sizeof(unsigned short),0);
+                    send(info->player->socketPlayer,info->scores->scores[i],sizeof(unsigned short),0);
                 }
                 pthread_exit(0);
                 break;

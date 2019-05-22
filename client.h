@@ -31,9 +31,6 @@ private:
     char direction;
 
 public:
-    short grid[400];
-    std::vector<double> frameX;
-    std::vector<double> frameY;
     Scores scores;
     int id;
     unsigned short score;
@@ -42,7 +39,7 @@ public:
     ~Client();
     void start_client(char* address);
     void close_client();
-    bool protocol();
+    void protocol();
     void set_direction(char direction);
 };
 

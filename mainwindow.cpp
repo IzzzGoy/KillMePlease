@@ -17,8 +17,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete scene;
-    delete timer;
     delete ui;
 }
 
@@ -42,6 +40,7 @@ void MainWindow::on_connectToGameButton_clicked()
     QByteArray tmp = ui->lineEdit->text().toLocal8Bit();
     client.start_client(tmp.data());
     ui->stackedWidget->setCurrentIndex(3);
+    ui->scoreCountLable->setText(QString("%1").arg(0));
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),SLOT(showpick()));
     timer->start(33);
@@ -56,15 +55,19 @@ void MainWindow::showpick()
     {
         if(state)
         {
-            sow_results();
             scene->clear();
-            table.Drow(client.grid,client.frameX,client.frameY,scene,client.id);
+            //scene = new QGraphicsScene;
+            //ui->graphicsView->setScene(scene);
+            table.Drow(client.coordinates.grid,client.coordinates.X,client.coordinates.Y,scene,client.id);
+            ui->scoreCountLable->setText(QString("%1").arg(client.score));
         }
         else
         {
-            ui->gameOverLable->setText(QString::number(client.id));
+            //scene->clear();
+            //ui->stackedWidget->setCurrentIndex(4);
+            pthread_join(tmp,NULL);
             pthread_join(protocolThread,NULL);
-            sleep(5);
+            sow_results();
             client.close_client();
             exit(0);
         }
@@ -93,6 +96,7 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_toGameButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(3);
+    ui->scoreCountLable->setText(QString("%1").arg(0));
     server.serverInit(numbOfPlayers);
     serverInfo* info = new serverInfo(&server,&state);
     pthread_create(&tmp,0,severServis,static_cast<void*>(info));
@@ -135,6 +139,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::sow_results()
 {
+    ui->stackedWidget->setCurrentIndex(4);
     if(client.id == 0)
     {
         ui->firstPlayerNameLable->setText(QString("You"));
@@ -143,7 +148,7 @@ void MainWindow::sow_results()
     {
         ui->firstPlayerNameLable->setText(QString("Player 1"));
     }
-    ui->firstPlayerResultsLable->setText(QString("%1").arg(client.scores.frameScores[0]));
+    ui->firstPlayerResultsLable->setText(QString("%1").arg(*client.scores.scores[0]));
     if(client.id == 1)
     {
         ui->secondPlayerNameLable->setText(QString("You"));
@@ -152,7 +157,7 @@ void MainWindow::sow_results()
     {
         ui->secondPlayerNameLable->setText(QString("Player 2"));
     }
-    ui->secondPlayerResultsLable->setText(QString("%1").arg(client.scores.frameScores[1]));
+    ui->secondPlayerResultsLable->setText(QString("%1").arg(*client.scores.scores[1]));
     if(client.id == 2)
     {
         ui->thirdPlayerNameLable->setText(QString("You"));
@@ -161,7 +166,7 @@ void MainWindow::sow_results()
     {
         ui->thirdPlayerNameLable->setText(QString("Player 3"));
     }
-    ui->thirdPlayerResultsLable->setText(QString("%1").arg(client.scores.frameScores[2]));
+    ui->thirdPlayerResultsLable->setText(QString("%1").arg(*client.scores.scores[2]));
     if(client.id == 3)
     {
         ui->foursPlayerNameLable->setText(QString("You"));
@@ -170,16 +175,19 @@ void MainWindow::sow_results()
     {
         ui->foursPlayerNameLable->setText(QString("Player 4"));
     }
-    ui->foursPlayerResultsLable->setText(QString("%1").arg(client.scores.frameScores[3]));
+    ui->foursPlayerResultsLable->setText(QString("%1").arg(*client.scores.scores[3]));
+    sleep(3);
 }
 
 void *MainWindow::protocolServis(void *arg)
 {
+    std::chrono::milliseconds dude(10);
     ProtocolInfo* info = static_cast<ProtocolInfo*>(arg);
-    while (info->client->protocol())
+    while (*info->state)
     {
+        info->client->protocol();
         *info->protocolState = true;
+        std::this_thread::sleep_for(dude);
     }
-    *info->state = false;
     pthread_exit(0);
 }
