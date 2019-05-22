@@ -19,7 +19,7 @@ Table::Table()
 
 }
 
-void Table::Drow(short int* grid,vector<double*> X,vector<double*> Y, QGraphicsScene *scene,int id)
+void Table::Drow(short int* grid,vector<double> X,vector<double> Y, QGraphicsScene *scene,int id)
 {
     for(size_t x = 0; x < 20; x++)
     {
@@ -63,12 +63,8 @@ void Table::Drow(short int* grid,vector<double*> X,vector<double*> Y, QGraphicsS
         }
     }
 
-//    players[1] = scene->addPixmap(pinky);
-//    players[2] = scene->addPixmap(blu);
-//    players[3] = scene->addPixmap(grey);
-
     for(size_t i = 0;i < 4;i++)
     {
-        players[i]->setPos(*Y[i] * 20,*X[i] * 20);
+        players[i]->setPos(Y[i] * 20,X[i] * 20);
     }
 }

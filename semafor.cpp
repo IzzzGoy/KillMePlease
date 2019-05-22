@@ -40,8 +40,3 @@ Semafor::~Semafor()
 {
     semctl(semId, IPC_RMID, 0);
 }
-
-/*void Semafor::Stop()
-{
-
-}*/

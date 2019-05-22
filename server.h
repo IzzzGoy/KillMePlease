@@ -29,18 +29,42 @@ enum State
 struct Scores
 {
     std::vector<unsigned short*> scores;
-    Scores() {}
+    std::vector<unsigned short> frameScores;
+    Scores()
+    {
+        scores.resize(4);
+        frameScores.resize(4);
+    }
+    void make_frame()
+    {
+        for(size_t i = 0; i < 4; i++)
+        {
+            frameScores[i] = *scores[i];
+        }
+    }
 };
 
 struct Coordinates
 {
     std::vector<double*> X;
     std::vector<double*> Y;
+    std::vector<double> frameX;
+    std::vector<double> frameY;
+    void make_frame()
+    {
+        for(size_t i = 0; i < 4; i++)
+        {
+            frameX[i] = *X[i];
+            frameY[i] = *Y[i];
+        }
+    }
     short* grid;
     Coordinates()
     {
         X.resize(4);
         Y.resize(4);
+        frameX.resize(4);
+        frameY.resize(4);
     }
     void set_grid(short* grid)
     {

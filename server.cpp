@@ -8,6 +8,26 @@ Server::Server()
 
 Server::~Server()
 {
+    for(size_t i = 0; i < players.size();i++)
+    {
+        delete players[i];
+    }
+    players.clear();
+    for(size_t i = 0; i < playersInfo.size();i++)
+    {
+        delete playersInfo[i];
+    }
+    playersInfo.clear();
+    for(size_t i = 0; i < bots.size();i++)
+    {
+        delete bots[i];
+    }
+    bots.clear();
+    for(size_t i = 0; i < BotsInfo.size();i++)
+    {
+        delete BotsInfo[i];
+    }
+    BotsInfo.clear();
     close(socketServer);
 }
 
@@ -21,8 +41,8 @@ void Server::serverInit(int numb)
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(3488);
-    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(5488);
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if((bind(socketServer,(sockaddr*)&addr,sizeof(addr)))<0)
     {
@@ -40,7 +60,6 @@ void Server::serverInit(int numb)
     playersInfo.resize(numbOfPlayers);
     bots.resize(numbOfBots);
     BotsInfo.resize(numbOfBots);
-    scores.scores.resize(4);
 
     coordinates.set_grid(grid);
 
@@ -83,6 +102,7 @@ void Server::doServer()
         std::this_thread::sleep_for(threadStop);
         //Ждём секунду, необходимо для генерации случайных координат
     }
+    std::cout<<"Grid server:" << grid<<std::endl;
 
     state = WAITING;
 
@@ -122,8 +142,7 @@ void *Server::playerServis(void *arg)
     std::chrono::milliseconds dude(33);
     unsigned short flag = 0;
     char directionFromClient;
-    unsigned short scoreToClient;
-    //fcntl(info->player->socketPlayer, F_SETFL, O_NONBLOCK);
+    int count = 0;
     while(true)
     {
         switch (*info->state)
@@ -132,25 +151,54 @@ void *Server::playerServis(void *arg)
                 std::this_thread::sleep_for(dude);
                 break;
         case WAITING:
-                send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
-                //Флаг о том, что мы ждём начала игры, но необходимо отрисовать поле
-                for(size_t i = 0; i < 4; i++)
+
+                while(count != sizeof(unsigned short))
                 {
-                    send(info->player->socketPlayer,info->coordinates->X[i],sizeof(*info->coordinates->X[i]),0);
-                    send(info->player->socketPlayer,info->coordinates->Y[i],sizeof(*info->coordinates->Y[i]),0);
-                    send(info->player->socketPlayer,info->coordinates->grid,sizeof(grid),0);
+                    count += send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
                 }
+
+                //Флаг о том, что мы ждём начала игры, но необходимо отрисовать поле
+                info->coordinates->make_frame();
+                //Создаём координаты фрейма
+                count = 0;
+                while(count != sizeof(short[400]))
+                {
+                    count += send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
+                }
+                count = 0;
+                while(count != sizeof(double)*8)
+                {
+                    for(size_t i = 0; i < 4; i++)
+                    {
+                        count += send(info->player->socketPlayer,&info->coordinates->frameX[i],sizeof(double),0);
+                        count += send(info->player->socketPlayer,&info->coordinates->frameY[i],sizeof(double),0);
+                    }
+                }
+                count = 0;
                 //Отсылаем координаты игроков и само поле
-                send(info->player->socketPlayer,&info->player->ID,sizeof(int),0);
+                while(count != sizeof(int))
+                {
+                    count += send(info->player->socketPlayer,&info->player->ID,sizeof(int),0);
+                }
+                count = 0;
+
                 std::this_thread::sleep_for(dude);
                 break;
         case STARTGAME:
                 info->player->eat();
                 flag = 1;
                 //Изменяем флаг
-                send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
+                while(count != sizeof(unsigned short))
+                {
+                    count += send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
+                }
+                count = 0;
                 //Отправляем флаг, что игра началась
-                recv(info->player->socketPlayer,&directionFromClient,sizeof(char),0);
+                while(count != sizeof(char))
+                {
+                    count += recv(info->player->socketPlayer,&directionFromClient,sizeof(char),0);
+                }
+                count = 0;
                 info->player->set_direction(directionFromClient);
                 //Принимаем направление движения
                 if(info->player->move())
@@ -158,40 +206,81 @@ void *Server::playerServis(void *arg)
                     for(size_t i = 0; abs(i - 1/info->player->get_speed()) > 0.001; i++)
                     {
                         info->player->step();
-                        for(size_t i = 0; i < 4; i++)
+                        info->coordinates->make_frame();
+
+                        while(count != sizeof(short[400]))
                         {
-                            send(info->player->socketPlayer,info->coordinates->X[i],sizeof(double),0);
-                            send(info->player->socketPlayer,info->coordinates->Y[i],sizeof(double),0);
+                            count += send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
                         }
+                        count = 0;
+                        while(count != sizeof(double)*8)
+                        {
+                            for(size_t i = 0; i < 4; i++)
+                            {
+                                count += send(info->player->socketPlayer,&info->coordinates->frameX[i],sizeof(double),0);
+                                count += send(info->player->socketPlayer,&info->coordinates->frameY[i],sizeof(double),0);
+                            }
+                        }
+                        count = 0;
                         std::this_thread::sleep_for(dude);
                     }
-
-                    scoreToClient = info->player->get_score();
-                    send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
+                    info->scores->make_frame();
+                    while(count != sizeof(unsigned short)*4)
+                    {
+                        for(size_t i = 0; i < 4; i++)
+                        {
+                            count += send(info->player->socketPlayer,&info->scores->frameScores[i],sizeof(unsigned short),0);
+                        }
+                    }
+                    count = 0;
                 }
                 else
                 {
                     for(size_t i = 0; abs(i - 1/info->player->get_speed()) > 0.001; i++)
                     {
-                        for(size_t i = 0; i < 4; i++)
+                        info->coordinates->make_frame();
+                        //send(info->player->socketPlayer,info->coordinates,sizeof(Coordinates),0);
+                        while(count != sizeof(short[400]))
                         {
-                            send(info->player->socketPlayer,info->coordinates->X[i],sizeof(double),0);
-                            send(info->player->socketPlayer,info->coordinates->Y[i],sizeof(double),0);
+                            count += send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);
                         }
+                        count = 0;
+                        while(count != sizeof(double)*8)
+                        {
+                            for(size_t i = 0; i < 4; i++)
+                            {
+                                count += send(info->player->socketPlayer,&info->coordinates->frameX[i],sizeof(double),0);
+                                count += send(info->player->socketPlayer,&info->coordinates->frameY[i],sizeof(double),0);
+                            }
+                        }
+                        count = 0;
                         std::this_thread::sleep_for(dude);
                     }
-                    scoreToClient = info->player->get_score();
-                    send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
+                    info->scores->make_frame();
+                    while(count != sizeof(unsigned short)*4)
+                    {
+                        for(size_t i = 0; i < 4; i++)
+                        {
+                            count += send(info->player->socketPlayer,&info->scores->frameScores[i],sizeof(unsigned short),0);
+                        }
+                    }
+                    count = 0;
                 }
                 break;
         case RESULTS:
                 flag = 2;
-                send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
-                scoreToClient = info->player->get_score();
-                send(info->player->socketPlayer,&scoreToClient,sizeof(unsigned short),0);
-                for(size_t i = 0; i < 4; i++)
+                while(count != sizeof(unsigned short))
                 {
-                    send(info->player->socketPlayer,info->scores->scores[i],sizeof(unsigned short),0);
+                    count += send(info->player->socketPlayer,&flag,sizeof(unsigned short),0);
+                }
+                count = 0;
+                info->scores->make_frame();
+                while(count != sizeof(unsigned short)*4)
+                {
+                    for(size_t i = 0; i < 4; i++)
+                    {
+                        count += send(info->player->socketPlayer,&info->scores->frameScores[i],sizeof(unsigned short),0);
+                    }
                 }
                 pthread_exit(0);
                 break;
