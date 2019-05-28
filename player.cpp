@@ -93,13 +93,13 @@ bool Player::move()
 
 void Player::eat()
 {
-    semafor->Give(X * 20 + Y);
+    semafor->Take(X * 20 + Y);
     if(grid[X * 20 + Y] == 3)
     {
         score++;
         grid[X * 20 + Y] = 0;
     }
-    semafor->Take(X * 20 +Y);
+    semafor->Give(X * 20 +Y);
 }
 
 Player::Player(int socket, short *grid, int id, Semafor *semafor)

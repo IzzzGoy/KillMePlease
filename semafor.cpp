@@ -10,7 +10,7 @@ Semafor::Semafor()
             op.sem_flg = 0;
             op.sem_num = i;
 
-            semop(semId, &op, 0);
+            semop(semId, &op, 1);
         }
 
 }

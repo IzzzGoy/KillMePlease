@@ -30,6 +30,7 @@ void Client::start_client(char *address)
     addr.sin_addr.s_addr =inet_addr(address);
 
     connect(socketClient,(sockaddr*)&addr,sizeof(addr));
+    std::cout<<"Connect to Server"<<std::endl;
 
 }
 
@@ -46,6 +47,7 @@ bool Client::protocol()
     recv(socketClient,&flag,sizeof(unsigned short),0);
     switch (flag)
     {
+    std::cout<<"Flag is "<<flag << std::endl;
     case 0:
         while(count != sizeof(short[400]))
         {
