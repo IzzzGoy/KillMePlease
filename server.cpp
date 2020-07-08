@@ -239,7 +239,6 @@ void *Server::playerServis(void *arg)
                     for(size_t i = 0; abs(i - 1/info->player->get_speed()) > 0.001; i++)
                     {
                         info->coordinates->make_frame();
-                        //send(info->player->socketPlayer,info->coordinates,sizeof(Coordinates),0);
                         while(count != sizeof(short[400]))
                         {
                             count += send(info->player->socketPlayer,info->coordinates->grid,sizeof(short[400]),0);

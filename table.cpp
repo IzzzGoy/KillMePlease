@@ -30,21 +30,21 @@ void Table::Drow(short int* grid,vector<double> X,vector<double> Y, QGraphicsSce
                 QGraphicsPixmapItem* tmp;
                 tmp = scene->addPixmap(wall);
                 tmp->setPos(x*20,y*20);
-                //table[x + 20 * y] = tmp;
+
             }
             else if(grid[x + 20 * y] == 0)
             {
                 QGraphicsPixmapItem* tmp;
                 tmp = scene->addPixmap(no_food);
                 tmp->setPos(x*20,y*20);
-                //table[x + 20 * y] = tmp;
+
             }
             else if(grid[x + 20 * y] == 3)
             {
                 QGraphicsPixmapItem* tmp;
                 tmp = scene->addPixmap(food);
                 tmp->setPos(x*20,y*20);
-                //table[x + 20 * y] = tmp;
+
             }
         }
     }
